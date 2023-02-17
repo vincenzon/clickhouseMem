@@ -23,7 +23,7 @@ const connect = async () => {
 
   await client.exec({
     query: `
-      CREATE TABLE ${table}
+      CREATE TABLE IF NOT EXISTS ${table} 
       (id UInt64, name String, val Float64)
       ENGINE MergeTree()
       ORDER BY (id)
@@ -57,12 +57,23 @@ const run = () => {
 
   const n = 1000;
   const w = 100 * n;
+
+  /*
   while (true) {
     if (id % w === 0) {
       console.log(`id ${id}, mem: ${process.memoryUsage().heapUsed}`);
     }
     push(rows(n));
   }
+  */
+
+  // replace while true with setInterval, so GC can do its job
+  setInterval(() => {
+    if (id % w === 0) {
+      console.log(`id ${id}, mem: ${process.memoryUsage().heapUsed}`);
+    }
+    push(rows(n));
+  }, 1);
 };
 
 run();
